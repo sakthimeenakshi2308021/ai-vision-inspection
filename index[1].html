@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>AI Vision Inspection & Measurement</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>AI Vision Inspection</h1>
+    <p>Smartphone-based mechanical component inspection prototype</p>
+  </div>
+  <span class="badge">Engineering MVP</span>
+</header>
+
+<main>
+  <section class="card controls">
+    <h2>1. Capture</h2>
+    <div class="row">
+      <button id="startCamera">Start camera</button>
+      <button id="stopCamera" class="secondary">Stop</button>
+      <button id="capture" class="primary">Capture photo</button>
+      <label class="fileBtn">Upload image<input id="upload" type="file" accept="image/*"></label>
+    </div>
+    <div class="row">
+      <label>Mode
+        <select id="mode">
+          <option value="photo">Photo</option>
+          <option value="live">Live</option>
+          <option value="video">Video</option>
+        </select>
+      </label>
+      <label>Reference size
+        <select id="referenceSize">
+          <option value="50">50 mm square marker</option>
+          <option value="25">25 mm square marker</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">For the prototype, place a known-size square reference beside the component. The CV pipeline detects the square automatically and derives mm/pixel.</p>
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas"></canvas>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>2. Inspection image</h2>
+      <div class="viewer">
+        <canvas id="resultCanvas"></canvas>
+        <div id="empty">Capture or upload a component image</div>
+      </div>
+      <div id="status" class="status">Waiting for image…</div>
+    </div>
+
+    <div class="card">
+      <h2>3. Engineering result</h2>
+      <div class="metrics">
+        <div><span>Component</span><strong id="component">—</strong></div>
+        <div><span>Confidence</span><strong id="confidence">—</strong></div>
+        <div><span>Calibration</span><strong id="calibration">—</strong></div>
+        <div><span>Scale</span><strong id="scale">—</strong></div>
+        <div><span>Length</span><strong id="length">—</strong></div>
+        <div><span>Width / diameter</span><strong id="width">—</strong></div>
+        <div><span>Measurement uncertainty</span><strong id="uncertainty">—</strong></div>
+        <div><span>Inspection</span><strong id="passfail">—</strong></div>
+      </div>
+
+      <h3>Evidence classification</h3>
+      <ul id="evidence">
+        <li>Measured: —</li>
+        <li>AI-estimated: —</li>
+        <li>Standards matched: —</li>
+      </ul>
+
+      <h3>Inspection notes</h3>
+      <div id="notes" class="notes">No inspection performed.</div>
+
+      <button id="pdf" class="primary full">Generate PDF report</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Engineering assumptions & limitations</h2>
+    <div class="limitations">
+      <p><b>Reliable in this prototype:</b> 2D dimensions when the part and reference lie on approximately the same plane, lighting is adequate, the reference is visible, and perspective is limited.</p>
+      <p><b>Not reliable:</b> hidden depth, true 3D dimensions from one image, fine thread geometry, exact surface roughness, or aerospace-grade metrology.</p>
+      <p><b>Uncertainty model:</b> approximately ±2 pixels of image-edge uncertainty is propagated through the detected mm/pixel scale. Perspective and lens effects are treated as additional qualitative limitations.</p>
+    </div>
+  </section>
+</main>
+
+<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
